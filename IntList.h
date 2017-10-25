@@ -9,9 +9,7 @@ namespace iProlog
 	{
 
   private:
-//JAVA TO C++ CONVERTER NOTE: Fields cannot have the same name as methods:
 	  const int head_Renamed;
-//JAVA TO C++ CONVERTER NOTE: Fields cannot have the same name as methods:
 	  IntList *const tail_Renamed;
 
   public:
