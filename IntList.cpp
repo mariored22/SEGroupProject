@@ -63,7 +63,6 @@ namespace iProlog
 
 	std::wstring IntList::toString()
 	{
-//JAVA TO C++ CONVERTER TODO TASK: There is no native C++ equivalent to 'toString':
 	  return toInts(this)->toString();
 	}
 }
