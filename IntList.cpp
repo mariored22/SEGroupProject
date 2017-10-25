@@ -34,11 +34,15 @@ namespace iProlog
 	IntList *IntList::app(std::vector<int> &xs, IntList *const Ys)
 	{
 	  IntList *Zs = Ys;
-	  for (int i = xs.size() - 1; i >= 0; i--)
-	  {
-		Zs = cons(xs[i], Zs);
-	  }
-	  return Zs;
+		
+		int i = xs.size() - 1;
+		while(i>=0)
+		{
+		  Zs = cons(xs[i], Zs);
+			i--;
+		}
+		
+		  return Zs;
 	}
 
 	IntStack *IntList::toInts(IntList *Xs)
