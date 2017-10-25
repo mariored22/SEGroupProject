@@ -5,6 +5,7 @@ namespace iProlog
 
 	Spine::Spine(std::vector<int> &gs0, int const base, IntList *const gs, int const ttop, int const k, std::vector<int> &cs) : hd(gs0[0]), base(base), gs(IntList::tail(IntList::app(gs0, gs))),ttop(ttop)
 	{
+		//It turns the function name into a dependent name so that base class member functions are found within a class template.
 	  this->k = k;
 	  this->cs = cs;
 	}
