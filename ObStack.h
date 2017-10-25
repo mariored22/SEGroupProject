@@ -13,7 +13,7 @@ namespace iProlog
 	  static constexpr long long serialVersionUID = 1LL;
 
   public:
-	  T pop()
+	 int T pop()
 	  {
 		constexpr int last = this->size() - 1;
 		return this->remove(last);
