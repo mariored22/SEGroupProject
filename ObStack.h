@@ -24,7 +24,7 @@ namespace iProlog
 		this->add(O);
 	  }
 
-	  T peek()
+	int T peek()
 	  {
 		return this->get(this->size() - 1);
 	  }
