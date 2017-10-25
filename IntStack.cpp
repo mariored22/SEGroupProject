@@ -28,8 +28,7 @@ int IntStack::MINSIZE = 1 << 15;
 
 	void IntStack::clear()
 	{
-	  //for (int i = 0; i <= top; i++)
-	  //stack[i] = 0;
+	  	  //stack[i] = 0;
 	  top = -1;
 	}
 
@@ -111,7 +110,7 @@ int IntStack::MINSIZE = 1 << 15;
 	{
 	  int l = size();
 	  int h = l >> 1;
-	  // Prolog.dump("l="+l);
+	 
 	  for (int i = 0; i < h; i++)
 	  {
 		int temp = stack[i];
@@ -122,7 +121,6 @@ int IntStack::MINSIZE = 1 << 15;
 
 	std::wstring IntStack::toString()
 	{
-//JAVA TO C++ CONVERTER TODO TASK: There is no native C++ equivalent to 'toString':
 	  return Arrays->toString(toArray());
 	}
 }
