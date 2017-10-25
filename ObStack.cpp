@@ -2,5 +2,5 @@
 
 namespace iProlog
 {
-  //This function is used to create the obstack.h
+  //provide statements that include obstack.h
 }
