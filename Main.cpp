@@ -38,7 +38,7 @@ namespace iProlog
 	  std::wcout << L"time=" << (t2 - t1) / 1000000000.0 << std::endl;
 
 	}
-
+//main function
 	void Main::srun(const std::wstring &fname0)
 	{
 	  const std::wstring fname = fname0 + L".nl";
