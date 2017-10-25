@@ -2,14 +2,10 @@
 
 #include <string>
 #include <vector>
-
-/// <summary>
-/// Dynamic Stack for int data.
-/// </summary>
 namespace iProlog
 {
 
-	class IntStack
+	class IntStack			//dynamic stack data
 	{
 
   private:
