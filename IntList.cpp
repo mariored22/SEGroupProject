@@ -5,7 +5,7 @@ namespace iProlog
 	IntList::IntList(int const head) : head(head), tail(nullptr)
 	{
 	}
-
+//IntList constructur declaration
 	IntList::IntList(int const X, IntList *const Xs) : head(X), tail(Xs)
 	{
 	}
@@ -43,7 +43,7 @@ namespace iProlog
 		
 		  return Zs;
 	}
-
+//To ints conversion
 	IntStack *IntList::toInts(IntList *Xs)
 	{
 	  IntStack * const is = new IntStack();
@@ -54,7 +54,7 @@ namespace iProlog
 	  }
 	  return is;
 	}
-
+//Lenght of the file 
 	int IntList::len(IntList *const Xs)
 	{
 	  return toInts(Xs)->size();
