@@ -50,17 +50,17 @@ int IntStack::MINSIZE = 1 << 15;
 	{
 	  constexpr int r = stack[top--];
 	  shrink();
-	  return r;
+	  return r;// returns the pop file
 	}
 
-	int IntStack::get(int const i)
+	int IntStack::get(int const a)
 	{
-	  return stack[i];
+	  return stack[a];
 	}
 
-	void IntStack::set(int const i, int const val)
+	void IntStack::set(int const i, int const value)
 	{
-	  stack[i] = val;
+	  stack[i] = value;
 	}
 
 	int IntStack::size()
