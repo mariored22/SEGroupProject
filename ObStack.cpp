@@ -2,5 +2,5 @@
 
 namespace iProlog
 {
-  //statements that describe iprolog
+  //provide statements that include obstack.h
 }
