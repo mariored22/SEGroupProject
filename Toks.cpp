@@ -27,7 +27,7 @@ std::wstring Toks::IS = L"is";
 		return T;
 
 	  }
-//JAVA TO C++ CONVERTER WARNING: 'final' catch parameters are not available in C++:
+//Warning: 'final' catch parameters are not available in C++:
 //ORIGINAL LINE: catch (final IOException e)
 	  catch (const IOException &e)
 	  {
@@ -67,7 +67,7 @@ std::wstring Toks::IS = L"is";
 		  c = nextToken();
 		}
 	  }
-//JAVA TO C++ CONVERTER WARNING: 'final' catch parameters are not available in C++:
+//WARNING: 'final' catch parameters are not available in C++:
 //ORIGINAL LINE: catch (final IOException e)
 	  catch (const IOException &e)
 	  {
@@ -97,7 +97,7 @@ std::wstring Toks::IS = L"is";
 				t = L"c:" + sval;
 			  }
 			}
-//JAVA TO C++ CONVERTER WARNING: 'final' catch parameters are not available in C++:
+//WARNING: 'final' catch parameters are not available in C++:
 //ORIGINAL LINE: catch (final Exception e)
 			catch (const std::exception &e)
 			{
