@@ -1,8 +1,6 @@
 #include "Main.h"
-
 namespace iProlog
 {
-
 	void Main::println(void *const o)
 	{
 	  std::wcout << o << std::endl;
@@ -38,7 +36,7 @@ namespace iProlog
 	  std::wcout << L"time=" << (t2 - t1) / 1000000000.0 << std::endl;
 
 	}
-//main function
+//main function starts from here
 	void Main::srun(const std::wstring &fname0)
 	{
 	  const std::wstring fname = fname0 + L".nl";
@@ -60,6 +58,7 @@ namespace iProlog
 	  std::wcout << L"time=" << (t2 - t1) / 1000000000.0 << std::endl;
 	}
 
+	
 	void Main::main(std::vector<std::wstring> &args)
 	{
 		  std::wstring fname = args[0];

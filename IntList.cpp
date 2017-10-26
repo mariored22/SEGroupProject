@@ -2,7 +2,6 @@
 
 namespace iProlog
 {
-
 	IntList::IntList(int const head) : head(head), tail(nullptr)
 	{
 	}
@@ -65,4 +64,6 @@ namespace iProlog
 	{
 	  return toInts(this)->toString();
 	}
+
 }
+

@@ -3,7 +3,7 @@
 namespace iProlog
 {
 
-int IntStack::SIZE = 16;
+int IntStack::SIZE = 18;
 int IntStack::MINSIZE = 1 << 15;
 
 	IntStack::IntStack() : IntStack(SIZE)
@@ -39,7 +39,6 @@ int IntStack::MINSIZE = 1 << 15;
 
 	void IntStack::push(int const i)
 	{
-	  // IO.dump("push:"+i);
 	  if (++top >= stack.size())
 	  {
 		expand();
@@ -51,17 +50,17 @@ int IntStack::MINSIZE = 1 << 15;
 	{
 	  constexpr int r = stack[top--];
 	  shrink();
-	  return r;
+	  return r;// returns the pop file
 	}
 
-	int IntStack::get(int const i)
+	int IntStack::get(int const a)
 	{
-	  return stack[i];
+	  return stack[a];
 	}
 
-	void IntStack::set(int const i, int const val)
+	void IntStack::set(int const i, int const value)
 	{
-	  stack[i] = val;
+	  stack[i] = value;
 	}
 
 	int IntStack::size()
@@ -85,7 +84,7 @@ int IntStack::MINSIZE = 1 << 15;
 	  {
 		return;
 	  }
-	  l = 1 + (top << 1); // still means shrink to at 1/2 or less of the heap
+	  l = 1 + (top << 1); 
 	  if (top < MINSIZE)
 	  {
 		l = MINSIZE;
@@ -118,7 +117,6 @@ int IntStack::MINSIZE = 1 << 15;
 		stack[l - i - 1] = temp;
 	  }
 	}
-
 	std::wstring IntStack::toString()
 	{
 	  return Arrays->toString(toArray());

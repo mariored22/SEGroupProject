@@ -27,8 +27,7 @@ std::wstring Toks::IS = L"is";
 		return T;
 
 	  }
-//Warning: 'final' catch parameters are not available in C++:
-//ORIGINAL LINE: catch (final IOException e)
+
 	  catch (const IOException &e)
 	  {
 		e->printStackTrace();
@@ -67,8 +66,6 @@ std::wstring Toks::IS = L"is";
 		  c = nextToken();
 		}
 	  }
-//WARNING: 'final' catch parameters are not available in C++:
-//ORIGINAL LINE: catch (final IOException e)
 	  catch (const IOException &e)
 	  {
 		return L"*** tokenizer error:" + t;
@@ -99,6 +96,8 @@ std::wstring Toks::IS = L"is";
 			}
 //WARNING: 'final' catch parameters are not available in C++:
 //ORIGINAL LINE: catch (final Exception e)
+=======
+
 			catch (const std::exception &e)
 			{
 			  t = L"c:" + sval;
