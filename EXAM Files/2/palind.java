@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-pubic class palindrom{
+public class palind{
 
 public static void main(String args[])
 	   {
