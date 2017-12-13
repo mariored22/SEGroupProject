@@ -1,33 +1,30 @@
-#pragma once
+#ifndef __OBSTACK_H__
+#define __OBSTACK_H__
 
 #include <vector>
 
-namespace iProlog
+using namespace std;
+
+template <class T>
+class ObStack
 {
+	int last;
+	vector<T> v;
+public:
 
-	template<typename T>
-	class ObStack : public std::vector<T>
-	{
+	T pop();
 
-  private:
-	  static constexpr long long serialVersionUID = 1LL;
 
-  public:
-	 int T pop()
-	  {
-		constexpr int last = this->size() - 1;
-		return this->remove(last);
-	  }
+	ObStack();
 
-	  void push(T const O)
-	  {
-		this->add(O);
-	  }
+	void push(T O);
 
-	int T peek()
-	  {
-		return this->get(this->size() - 1);
-	  }
-	};
+	bool isEmpty();
 
-}
+	T get(int index);
+
+
+	T peek();
+};
+
+#endif

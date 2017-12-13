@@ -1,68 +1,46 @@
-#pragma once
+#ifndef __INTSTACK_H__
+#define __INTSTACK_H__
 
-#include <string>
 #include <vector>
-namespace iProlog
-{
+#include <string>
+#include <stdio.h>
 
-	class IntStack			//dynamic stack data
-	{
+using namespace std;
 
-  private:
-	  std::vector<int> stack;
+class IntStack {
 
-	  int top = 0;
+private:
 
-  public:
-	  static int SIZE; // power of 2
+	vector<int> stack;
+	int top;
+	int SIZE = 16;
+	int MINSIZE = 1 << 15;
 
-	  static int MINSIZE; // power of 2
+public:
 
-	  IntStack();
+	IntStack();
+	IntStack(int size);
+	void init(int size);
+	int getTop();
+	int setTop(int top);
+	void clear();
+	bool isEmpty();
+	void push(int i);
+	int pop();
+	int get(int i);
+	void set(int i, int val);
+	int size();
 
-	  IntStack(int const size);
+//private:
+  /**
+   * dynamic array operation: doubles when full
+   */
+	void expand();
+	void shrink();
+	vector<int> toArray();
+	void reverse();
+	string toString();
 
-	  int getTop();
+};
 
-	  int setTop(int const top);
-
-	  void clear();
-
-	  bool isEmpty();
-
-	  /// <summary>
-	  /// Pushes an element - top is incremented first than the
-	  /// element is assigned. This means top point to the last assigned
-	  /// element - which can be returned with peek().
-	  /// </summary>
-	  void push(int const i);
-
-	  int pop();
-
-	  int get(int const i);
-
-	  void set(int const i, int const val);
-
-	  int size();
-
-	  /// <summary>
-	  /// dynamic array operation: doubles when full
-	  /// </summary>
-  private:
-	  void expand();
-
-	  /// <summary>
-	  /// dynamic array operation: shrinks to 1/2 if more than than 3/4 empty
-	  /// </summary>
-	  void shrink();
-
-  public:
-	  virtual std::vector<int> toArray();
-
-	  void reverse();
-
-	  std::wstring toString() override;
-
-	};
-
-}
+#endif
