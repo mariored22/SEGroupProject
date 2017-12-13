@@ -1,46 +1,32 @@
-#pragma once
+#ifndef __INTLIST_H__
+#define __INTLIST_H__
 
 #include <string>
 #include <vector>
+#include "IntStack.h"
 
-namespace iProlog
-{
-	class IntList
-	{
+using namespace std;
 
-  private:
-	  const int head_Renamed;
-	  IntList *const tail_Renamed;
+class IntList {
 
-  public:
-	  virtual ~IntList()
-	  {
-		  delete tail;
-	  }
+private:
 
-  private:
-	  IntList(int const head);
+	int _head;
+	IntList * _tail;
+	
+	IntList(int head);
+	IntList(int X, IntList * Xs);
 
-	  IntList(int const X, IntList *const Xs);
+public:
 
-  public:
-	  static bool isEmpty(IntList *const Xs);
+	static bool isEmpty(IntList *Xs);
+	static int head(IntList *Xs);
+	static IntList * tail(IntList * Xs);
+	static IntList * cons(int X, IntList *Xs);
+	static IntList * app(vector<int> xs, IntList * Ys);
+	static IntStack * toInts(IntList * Xs);
+	static int len(IntList *Xs);
+	string toString();
+};
 
-	  static int head(IntList *const Xs);
-
-	  static constexpr IntList *empty = nullptr;
-
-	  static IntList *tail(IntList *const Xs);
-
-	  static IntList *cons(int const X, IntList *const Xs);
-
-	  static IntList *app(std::vector<int> &xs, IntList *const Ys);
-
-	  static IntStack *toInts(IntList *Xs);
-
-	  static int len(IntList *const Xs);
-
-	  std::wstring toString() override;
-	};
-
-}
+#endif

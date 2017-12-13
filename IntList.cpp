@@ -1,69 +1,61 @@
 #include "IntList.h"
+	
+IntList::IntList(int head) {
+    this->_head = head;
+    _tail = NULL;
+  }
 
-namespace iProlog
-{
-	IntList::IntList(int const head) : head(head), tail(nullptr)
-	{
-	}
-//IntList constructur declaration
-	IntList::IntList(int const X, IntList *const Xs) : head(X), tail(Xs)
-	{
-	}
+IntList::IntList(int X, IntList * Xs) {
+    _head = X;
+    _tail = Xs;
+  }
 
-	bool IntList::isEmpty(IntList *const Xs)
-	{
-	  return nullptr == Xs;
-	}
+	 bool IntList::isEmpty(IntList *Xs) {
+    return NULL == Xs;
+  }
 
-	int IntList::head(IntList *const Xs)
-	{
-	  return Xs->head_Renamed;
-	}
+	 int IntList::head(IntList *Xs) {
+    return Xs->_head;
+  }
 
-	IntList *IntList::tail(IntList *const Xs)
-	{
-	  return Xs->tail_Renamed;
-	}
+   IntList * IntList::tail(IntList * Xs) {
+    return Xs->_tail;
+  }
 
-	IntList *IntList::cons(int const X, IntList *const Xs)
-	{
-	  return new IntList(X, Xs);
-	}
+   IntList * IntList::cons(int X, IntList *Xs) {
+    return new IntList(X, Xs);
+  }
 
-	IntList *IntList::app(std::vector<int> &xs, IntList *const Ys)
-	{
-	  IntList *Zs = Ys;
-		
-		int i = xs.size() - 1;
-		while(i>=0)
-		{
-		  Zs = cons(xs[i], Zs);
-			i--;
-		}
-		
-		  return Zs;
-	}
-//To ints conversion
-	IntStack *IntList::toInts(IntList *Xs)
-	{
-	  IntStack * const is = new IntStack();
-	  while (!isEmpty(Xs))
-	  {
-		is->push(head(Xs));
-		Xs = tail(Xs);
-	  }
-	  return is;
-	}
-//Lenght of the file 
-	int IntList::len(IntList *const Xs)
-	{
-	  return toInts(Xs)->size();
-	}
+   IntList *IntList::app(vector<int> xs, IntList * Ys) {
+    IntList * Zs = Ys;
+    for (int i = xs.size() - 1; i >= 0; i--) {
+      Zs = cons(xs[i], Zs);
+    }
+    return Zs;
+  }
 
-	std::wstring IntList::toString()
-	{
-	  return toInts(this)->toString();
-	}
+   IntStack * IntList::toInts(IntList * Xs) {
+    IntStack *is = new IntStack();
+    while (!isEmpty(Xs)) {
+      is->push(head(Xs));
+      Xs = tail(Xs);
+    }
+    return is;
+  }
 
-}
+   int IntList::len(IntList *Xs) {
+	   IntStack * is = toInts(Xs);
+	   int r = is->size();
+	   delete is;
+	   return r;
+//    return toInts(Xs).size();
+  }
+
+  string IntList::toString() {
+	  IntStack * is = toInts(this);
+	  string s = is->toString();
+	  delete is;
+	  return s;
+//    return toInts(this).toString();
+  }
 
