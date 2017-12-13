@@ -1,186 +1,126 @@
 #include "Toks.h"
 
-namespace iProlog
-{
 
-std::wstring Toks::IF = L"if";
-std::wstring Toks::AND = L"and";
-std::wstring Toks::DOT = L".";
-std::wstring Toks::HOLDS = L"holds";
-std::wstring Toks::LISTS = L"lists";
-std::wstring Toks::IS = L"is";
+  Toks * Toks::makeToks(string s, bool fromFile) {
+		FILE * f;
+      if (fromFile) {
+		  f = fopen(s.c_str(), "r");
+      } else {
+		  f = stdin;
+      }
+      Toks *T = new Toks(f);
+      return T;
 
-	Toks *Toks::makeToks(const std::wstring &s, bool const fromFile)
+  }
+
+  Toks::Toks(FILE * f) {
+
+	  this->f = f;
+  }
+
+
+  string * Toks::getWord() {
+    string *t = NULL;
+
+	char c;
+	fscanf(f, "%c", &c);
+	while (!feof(f) && isspace(c))
 	{
-	  try
-	  {
-		Reader *R;
-		if (fromFile)
-		{
-		  R = new FileReader(s);
-		}
-		else
-		{
-		  R = new StringReader(s);
-		}
-		Toks * const T = new Toks(R);
-		return T;
-
-	  }
-
-	  catch (const IOException &e)
-	  {
-		e->printStackTrace();
-		return nullptr;
-	  }
+		fscanf(f, "%c", &c);
 	}
 
-	Toks::Toks(Reader *const reader) : StreamTokenizer(reader)
+	if (feof(f))
+		return NULL;
+
+	if (c == '.')
 	{
-	  resetSyntax();
-	  eolIsSignificant(false);
-	  ordinaryChar(L'.');
-	  ordinaryChars(L'!', L'/'); // 33-47
-	  ordinaryChars(L':', L'@'); // 55-64
-	  ordinaryChars(L'[', L'`'); // 91-96
-	  ordinaryChars(L'{', L'~'); // 123-126
-	  wordChars(L'_', L'_');
-	  wordChars(L'a', L'z');
-	  wordChars(L'A', L'Z');
-	  wordChars(L'0', L'9');
-	  slashStarComments(true);
-	  slashSlashComments(true);
-	  ordinaryChar(L'%');
+		t = new string(".");
 	}
-
-	std::wstring Toks::getWord()
+	else if (isupper(c) || c=='_')
 	{
-	  std::wstring t = L"";
-
-	  int c = TT_EOF;
-	  try
-	  {
-		c = nextToken();
-		while (std::isspace(c) && c != TT_EOF)
+		t = new string("v:");
+		while (!feof(f) && (isalnum(c) || c=='_'))
 		{
-		  c = nextToken();
+			*t += c;
+			fscanf(f, "%c", &c);			
 		}
-	  }
-	  catch (const IOException &e)
-	  {
-		return L"*** tokenizer error:" + t;
-	  }
-
-	  switch (c)
-	  {
-		case TT_WORD:
-		{
-		  constexpr wchar_t first = sval->charAt(0);
-		  if (std::isupper(first) || L'_' == first)
-		  {
-			t = L"v:" + sval;
-		  }
-		  else
-		  {
-			try
-			{
-			  constexpr int n = static_cast<Integer>(sval);
-			  if (std::abs(n) < 1 << 28)
-			  {
-				t = L"n:" + sval;
-			  }
-			  else
-			  {
-				t = L"c:" + sval;
-			  }
-			}
-//WARNING: 'final' catch parameters are not available in C++:
-//ORIGINAL LINE: catch (final Exception e)
-=======
-
-			catch (const std::exception &e)
-			{
-			  t = L"c:" + sval;
-			}
-		  }
-		}
-		break;
-
-		case StreamTokenizer::TT_EOF:
-		{
-		  t = L"";
-		}
-		break;
-
-		default:
-		{
-		  t = L"" + StringHelper::toString(static_cast<wchar_t>(c));
-		}
-
-	  }
-	  return t;
 	}
-
-	std::vector<std::vector<std::vector<std::wstring>>> Toks::toSentences(const std::wstring &s, bool const fromFile)
+	else if (islower(c))
 	{
-	  const std::vector<std::vector<std::vector<std::wstring>>> Wsss = std::vector<std::vector<std::vector<std::wstring>>>();
-	  std::vector<std::vector<std::wstring>> Wss;
-	  std::vector<std::wstring> Ws;
-	  Toks * const toks = makeToks(s, fromFile);
-	  std::wstring t = L"";
-	  while (L"" != (t = toks->getWord()))
-	  {
-
-		if (DOT == t)
+		t = new string("c:");
+		while (!feof(f) && isalnum(c))
 		{
-		  Wss.push_back(Ws);
-		  Wsss.push_back(Wss);
-		  Wss = std::vector<std::vector<std::wstring>>();
-		  Ws = std::vector<std::wstring>();
+			*t += c;
+			fscanf(f, "%c", &c);
 		}
-		else if ((L"c:" + IF)->equals(t))
-		{
-
-		  Wss.push_back(Ws);
-
-		  Ws = std::vector<std::wstring>();
-		}
-		else if ((L"c:" + AND)->equals(t))
-		{
-		  Wss.push_back(Ws);
-
-		  Ws = std::vector<std::wstring>();
-		}
-		else if ((L"c:" + HOLDS)->equals(t))
-		{
-		  const std::wstring w = Ws[0];
-		  Ws[0] = L"h:" + w.substr(2);
-		}
-		else if ((L"c:" + LISTS)->equals(t))
-		{
-		  const std::wstring w = Ws[0];
-		  Ws[0] = L"l:" + w.substr(2);
-		}
-		else if ((L"c:" + IS)->equals(t))
-		{
-		  const std::wstring w = Ws[0];
-		  Ws[0] = L"f:" + w.substr(2);
-		}
-		else
-		{
-		  Ws.push_back(t);
-		}
-	  }
-	  return Wsss;
 	}
-
-	std::wstring Toks::toString(std::vector<void*> &Wsss)
+	else if (isdigit(c))
 	{
-	  return Arrays::deepToString(Wsss);
+		t = new string("n:");
+		while (!feof(f) && isdigit(c))
+		{
+			*t += c;
+			fscanf(f, "%c", &c);
+		}
 	}
+    return t;
+  }
 
-	void Toks::main(std::vector<std::wstring> &args)
-	{
-	  Main::pp(toSentences(L"prog.nl", true));
-	}
+  vector<vector<vector<string>* > *> Toks::toSentences(string s, bool fromFile) {
+	  vector<vector<vector<string>* > *> Wsss; // = new ArrayList<ArrayList<ArrayList<String>>>();
+	  vector<vector<string> *>* Wss = new vector<vector<string> *>();
+	  vector<string>* Ws = new vector<string>();//<String>();
+     Toks * toks = makeToks(s, fromFile);
+    string *t = NULL;
+    while (NULL != (t = toks->getWord())) {
+
+      if (*t == ".") {
+        Wss->push_back(Ws);
+        Wsss.push_back(Wss);
+		Wss = new vector<vector<string>* >();
+		Ws = new vector<string>(); //ArrayList<String>();
+      } else if (*t == "c:if") { //("c:" + IF).equals(t)) {
+
+		  Wss->push_back(Ws); //.add(Ws);
+
+		  Ws = new vector<string>(); //ArrayList<String>();
+      } else if (*t == ("c:and")) {
+		  Wss->push_back(Ws); //add(Ws);
+
+		  Ws = new vector<string>();//ArrayList<String>();
+      } else if (*t=="c:holds") { //.equals(t)) {
+			  string w = (*Ws)[0]; //.get(0);
+			  (*Ws)[0] = "h:" + w.substr(2);//
+      //  Ws.set(0, "h:" + w.substring(2));
+      } else if (*t==("c:lists")) { //.equals(t)) {
+		  string w = (*Ws)[0];//.get(0);
+		  (*Ws)[0] = "l:" + w.substr(2);
+      //  Ws.set(0, "l:" + w.substring(2));
+      } else if (*t == ("c:is")){ //.equals(t)) {
+		  string w = (*Ws)[0]; // .get(0);
+		  (*Ws)[0] = "f:" + w.substr(2);
+     //   Ws.set(0, "f:" + w.substring(2));
+      } else {
+		  Ws->push_back(*t);
+       // Ws.add(t);
+      }
+    }
+
+	delete toks;
+    return Wsss;
+  }
+
+
+/*
+int main() {
+		vector<vector<vector<string>* > *> result = Toks::toSentences("perms.pl.nl", true);
+
+		for (vector<vector<string>*>* wss : result)
+		{
+
+		}
+
+		return 0;
+		// Main.pp(toSentences("prog.nl", true));
 }
+*/

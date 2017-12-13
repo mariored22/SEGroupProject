@@ -1,42 +1,30 @@
-#pragma once
+#ifndef __TOKS_H__
+#define __TOKS_H__
 
 #include <string>
 #include <vector>
-#include <cmath>
+#include <cstdio>
 #include <cctype>
-#include <stdexcept>
-#include "exceptionhelper.h"
-#include "stringhelper.h"
 
-namespace iProlog
-{
+#pragma warning(disable: 4996)
 
-	/// <summary>
-	/// Reads chars from char streams using the current default encoding
-	/// </summary>
-	class Toks : public StreamTokenizer
-	{
+using namespace std;
 
-	  // reserved words - with syntactic function
+/**
+ * Reads chars from char streams using the current default encoding
+ */
+class Toks{
 
-  public:
-	  static std::wstring IF;
-	  static std::wstring AND;
-	  static std::wstring DOT;
-	  static std::wstring HOLDS;
-	  static std::wstring LISTS; // todo
-	  static std::wstring IS; // todo
+public:
 
-	  static Toks *makeToks(const std::wstring &s, bool const fromFile);
+	static Toks * makeToks(string s, bool fromFile);
+	Toks(FILE * f);
 
-	  Toks(Reader *const reader);
+  FILE * f;
 
-	  virtual std::wstring getWord();
+  string * getWord();
+  static vector<vector<vector<string>* > *> toSentences(string s, bool fromFile);
 
-	  static std::vector<std::vector<std::vector<std::wstring>>> toSentences(const std::wstring &s, bool const fromFile);
+};
 
-	  static std::wstring toString(std::vector<void*> &Wsss);
-
-	  static void main(std::vector<std::wstring> &args);
-	};
-}
+#endif
