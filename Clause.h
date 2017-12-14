@@ -1,23 +1,28 @@
-#ifndef __CLAUSE_H__
-#define __CLAUSE_H__
+#ifndef _CLAUSE_
+#define _CLAUSE_
+
 /**
  * representation of a clause
  */
+class Clause 
+{
+	public:
+		static int created;
+		static int destroyed;
 
-#include <vector>
+		int len;
+		int* hgs;
+		int hgsLength;
+		int base;
+		int neck;
+		int* xs;
+		int xsLength;
 
-using namespace std;
-
-class Clause {
-public:
-
-	Clause(int len, vector<int> hgs, int base, int neck, vector<int> xs);
-
-  int len;
-  vector<int> hgs;
-  int base;
-  int neck;
-  vector<int> xs;
+	public:
+		Clause(int len, int* hgs, int hgsLenght, int base, int neck, int* xs, int xsLength);
+		Clause(const Clause& copied);
+		Clause operator=(const Clause& copied);
+		~Clause();
 };
 
 #endif
