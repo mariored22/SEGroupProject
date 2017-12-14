@@ -1109,6 +1109,3 @@ void Engine::index(std::vector<Clause>& clauses, IntMap vmaps[])
 	//pp(Arrays.toString(vmaps));
 	pp("");
 }
-Engine.cpp
-Open with Anyfile Notepad
-Displaying Engine.cpp.
