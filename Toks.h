@@ -1,30 +1,15 @@
-#ifndef __TOKS_H__
-#define __TOKS_H__
+#ifndef _TOKS_
+#define _TOKS_
 
-#include <string>
 #include <vector>
-#include <cstdio>
-#include <cctype>
+#include <string>
 
-#pragma warning(disable: 4996)
-
-using namespace std;
-
-/**
- * Reads chars from char streams using the current default encoding
- */
-class Toks{
-
-public:
-
-	static Toks * makeToks(string s, bool fromFile);
-	Toks(FILE * f);
-
-  FILE * f;
-
-  string * getWord();
-  static vector<vector<vector<string>* > *> toSentences(string s, bool fromFile);
-
+class Toks
+{
+		static bool getWord(std::istream& is, std::string& sval);
+		static void toSentences(std::istream& toks, std::vector< std::vector< std::vector<std::string> > >& Wsss);
+	public:		
+		static void toSentences(const char* s, const bool fromFile, std::vector< std::vector< std::vector<std::string> > >& Wsss);
 };
 
 #endif
