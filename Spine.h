@@ -1,10 +1,5 @@
-#ifndef __SPINE_H__
-#define __SPINE_H__
-
-#include <vector>
-#include "IntList.h"
-
-using namespace std;
+#ifndef _SPINE_
+#define _SPINE_
 
 /**
  * runtime representation of an immutable list of goals
@@ -16,29 +11,42 @@ using namespace std;
  * are shared among alternative branches
  */
 
-class Spine {
+#include <cstddef>
+#include <vector>
+#include "IntList.h"
 
+// number of index args
+#define MAXIND			3
+
+class Spine
+{	
 public:
+	static int created;
+	static int destroyed;
 
-  /**
-   * creates a spine - as a snapshot of some runtime elements
-   */
-	Spine(vector<int> gs0, int base, IntList *gs, int ttop, int k, vector <int> cs); 
-  /**
-   * creates a specialized spine returning an answer (with no goals left to solve)
-   */
-	Spine(int hd, int ttop);
+	Spine(const int* gs0, const int gslength, const int base, std::vector<int>& gs, const int ttop, const int k, std::vector<int>* cs);
+	Spine(const int hd, const int ttop);
+	~Spine();
 
-   int hd; // head of the clause to which this corresponds
-   int base; // top of the heap when this was created
+	int hd; // head of the clause to which this corresponds
+	int base; // top of the heap when this was created
 
-   IntList *gs; // goals - with the top one ready to unfold
-   int ttop; // top of the trail when this was created
+	std::vector<int> gs;
+	/*IntList* gs;*/ // goals - with the top one ready to unfold
+	int ttop; // top of the trail when this was created
 
-  int k;
+	int k;
 
-  vector<int> *xs; // index elements
-  vector<int> *cs; // array of  clauses known to be unifiable with top goal in gs
+	int xs[MAXIND];
+	bool xsNull;
+	
+	int cs(int index) const;
+	int csLength() const;
+
+        void print();
+private:
+	std::vector<int>* _cs; // array of  clauses known to be unifiable with top goal in gs	
 };
+
 
 #endif
