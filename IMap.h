@@ -1,40 +1,64 @@
-#ifndef __IMAP_H__
-#define __IMAP_H__
+#ifndef _IMAP_
+#define _IMAP_
 
 #include <map>
-#include <vector>
-#include <set>
-#include <algorithm>
 #include "IntMap.h"
-#include "IntStack.h"
 
-using namespace std;
+template<typename K>
 
-template <class K>
-class IMap {
+class IMap 
+{
 private:
-	map<K, IntMap*> map_;
-	vector < K>  map_list;
+	std::map<K, IntMap> _map;
 
 public:
+	/*void clear();
+	bool put(const K key, const int val);
+	IntMap& get(const K key);
+	bool remove(const K key, const int val);
+	bool remove(const K key);
+	int size();*/
+	
+	void clear()
+	{
+		_map.clear();
+	}
+	
+	bool put(const K key, const int val)
+	{
+		return !!(_map[key].get(val));
+	}
 
-	IMap();
-	void clear();
-	bool put(K key, int val);
-	IntMap *get(K key);
-	void remove_key(map<K, IntMap*> &mp, vector<K> mp_lst, K k);
-	bool remove(K key, int val);
-	bool remove(K key);
-	int size();
-	set<K> keySet();
-	string tostring();
-	static vector<IMap<int>*>* create(int l);
-	static bool put(vector<IMap<int>*> * imaps, int pos, int key, int val);
-	static vector<int>* get(vector<IMap<int>*> * iMaps, vector<IntMap *> *vmaps, vector<int> * keys);
-	static string show(vector<IMap<int>*> * imaps);
-	static string show(vector<int> is);
+	IntMap& get(const K key)
+	{
+		return _map[key];
+	}
+	
+	bool remove(const K key, const int val)
+	{	
+		IntMap& vals = get(key);
+		bool ok = vals.deleteKey(key);
+		if (vals.isEmpty()) 
+		{
+			_map.erase(_map.find(key));
+		}
+		return ok;
+	}
+	
+	bool remove(const K key)
+	{
+		if (_map.find(key) != _map.end()) 
+		{
+			_map.erase(_map.find(key));
+			return true;
+		}
+		return false;
+	}
 
-
+	int size()
+	{
+		return _map.size();
+	}	
 };
 
 #endif
