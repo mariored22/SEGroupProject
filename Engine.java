@@ -2,8 +2,9 @@ package iProlog;
 import java.util.*;
 
 /**
- * Implements execution mechanism
+ * Implements the execution mechanism
  */
+
 class Engine {
 
   final static int MAXIND = 3; // number of index args
