@@ -180,16 +180,7 @@ std::string Prog::exportTerm(int x, bool& isArray)
 					isArray = true;
 					res << ")";
 				}
-
-				/*for (int i = 0; i < n; i++) 
-				{
-					if (i>0)
-						res << ",";
-
-					int j = k + i;
-					res << exportTerm(heap[j]);
-				}*/				
-			}			      
+			      
 		break;
 		default:
 			res << "*BAD TERM*" << showCell(x);
