@@ -1,4 +1,4 @@
 # SEGroupProject
 
- JAVA to C++ coversion files.
+ JAVA to C++ conversion files.
 
