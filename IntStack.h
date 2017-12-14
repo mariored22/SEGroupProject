@@ -1,46 +1,36 @@
-#ifndef __INTSTACK_H__
-#define __INTSTACK_H__
+#ifndef _INTSTACK_
+#define _INTSTACK_
 
-#include <vector>
-#include <string>
-#include <stdio.h>
-
-using namespace std;
+/**
+ Dynamic Stack for int data.
+ */
 
 class IntStack {
-
 private:
-
-	vector<int> stack;
+	int *stack;
+	int stackLength;
 	int top;
-	int SIZE = 16;
-	int MINSIZE = 1 << 15;
-
-public:
-
-	IntStack();
-	IntStack(int size);
-	void init(int size);
-	int getTop();
-	int setTop(int top);
+	static const int SIZE = 16; // power of 2
+	static const int MINSIZE = 1 << 15; // power of 2
+public:	
+	IntStack(const int size=SIZE);
+	~IntStack();
+	IntStack(const IntStack& copied);
+	IntStack operator=(const IntStack& copied);
+    int getTop() const;
+    int setTop(const int top);
 	void clear();
-	bool isEmpty();
-	void push(int i);
+	bool isEmpty() const;
+    void push(const int i);
 	int pop();
-	int get(int i);
-	void set(int i, int val);
-	int size();
-
-//private:
-  /**
-   * dynamic array operation: doubles when full
-   */
+	int get(const int i) const;
+    void set(const int i, const int val);
+    int size() const;
 	void expand();
-	void shrink();
-	vector<int> toArray();
-	void reverse();
-	string toString();
+	void shrink();  
 
+	//int size() const;
+	//int get(int index) const;
 };
 
 #endif
