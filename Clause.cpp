@@ -59,3 +59,11 @@ Clause::~Clause()
 
 	destroyed++;
 }
+
+/*
+int main()
+{
+	Clause h(10,{4,6,7},9,{3,4,5}6,)	
+	cout<<h.base;
+}
+*/
