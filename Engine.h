@@ -1,447 +1,165 @@
-#ifndef __ENGINE_H__
-#define __ENGINE_H__
+#ifndef _ENGINE_
+#define _ENGINE_ 
 
-#include <vector>
-#include <string>
 #include <map>
+#include <vector>
 #include <list>
-#include <algorithm>
-#include "IntStack.h"
+#include <stack>
+#include <string>
 #include "Clause.h"
-#include "ObStack.h"
-#include "Spine.h"
-#include "IMap.h"
+#include "IntStack.h"
 #include "IntMap.h"
-#include "Toks.h"
+#include "IMap.h"
+#include "Spine.h"
 
-using namespace std;
-
-// classes for compability with Java
-class Object
-{
-public:
-	int instanceOf;
-	virtual string tostring();
-};
-
-#define OBJECT_ARRAY 1
-#define OBJECT_INTEGER 2
-#define OBJECT_STRING 3
-
-class ObjectArray : public Object
-{
-public:
-
-	vector<Object *> arr;
-
-	ObjectArray(vector<Object *> arr);
-	string tostring();
-};
-
-class ObjectInteger : public Object
-{
-public:
-	int x;
-	ObjectInteger(int x);
-	string tostring();
-};
-
-class ObjectString : public Object
-{
-public:
-	string x;
-	ObjectString(string x);
-		string tostring();
-};
+ 
+// switches off indexing for less then START_INDEX clauses e.g. <20
+#define START_INDEX		20
+  
 
 /**
  * Implements execution mechanism
  */
-class Engine {
+class Engine 
+{
+private:
+	
 
+	int addSym(const std::string& sym);
+	
+
+	void ensureSize(const int more);
+	void expand();
+
+	void makeHeap(); 
+	void makeHeap(const int size);
+	int getTop() const; 
+	int setTop(const int top);
+	void clear(); 
+	void push(const int i);
+	int size() const;
+
+	int encode(const int t, const std::string& s);
+
+	static void mapExpand(std::vector< std::vector<std::string> >& Wss, std::vector< std::vector<std::string> >& Rss);
+	static bool maybeExpand(std::vector<std::string>& Ws, std::vector< std::vector<std::string> >& Rss);
+
+	static int relocate(const int b, const int cell);
+	void pushCells(const int b, const int from, const int to, const int base);
+	void pushCells(const int b, const int from, const int to, const int* cs);
+	int pushHead(const int b, const Clause& C);
+
+	int* getIndexables(const int ref, int& xsLength);
+	int cell2index(const int cell);
+	static bool isVAR(const int x);
+	int getRef(const int x);
+	void setRef(const int w, const int r);
+	void unwindTrail(const int savedTop);
+
+	Spine* init();
+	Spine* answer(int ttop);
+	Clause& getQuery();
+
+	static void put(IMap<int> imaps[], IntMap vss[], int keys[], int val);
+	bool match(const int* xs, const Clause& C0);
+	bool unify(const int base);
+	bool unify_args(const int w1, const int w2);
+protected:
+	static int tag(const int t, const int w);
+	static int detag(const int w);
+	static int tagOf(const int w);
+
+	std::string getSym(int w);
+
+	/**
+	 * trimmed down clauses ready to be quickly relocated to the heap
+	 */
+	std::vector<Clause> clauses;	
+
+	std::vector<int> cls;	
+	/** symbol table made of map + reverse map from ints to syms */
+
+	std::map<std::string, int> syms;
+	std::vector<std::string> slist;
+
+	/** runtime areas:
+	 *
+	 * the heap contains code for and clauses their their copies
+	 * created during execution
+	 *
+	 * the trail is an undo list for variable bindings
+	 * that facilitates retrying failed goals with alternative
+	 * matching clauses
+	 *
+	 * the unification stack ustack helps handling term unification non-recursively
+	 *
+	 * the spines stack contains abstractions of clauses and goals and performs the
+	 * functions of  both a choice-point stack and goal stack
+	 *
+	 * imaps: contains indexes for up toMAXIND>0 arg positions (0 for pred symbol itself)
+	 *
+	 * vmaps: contains clause numbers for which vars occur in indexed arg positions
+	 */
+
+	int* heap;
+	int heapLength;
+
+	int top;
+	  	
+	IntStack trail;
+	IntStack ustack;
+
+	Spine* query;
+
+	std::list<Spine*> spines;
+	IntMap vmaps[MAXIND];
+	IMap<int> imaps[MAXIND];	 
+	bool imaps_null;
+
+	/**
+	 * tags of our heap cells - that can also be seen as
+	 * instruction codes in a compiled implementation
+	 */
+	static const int V = 0;
+	static const int U = 1;
+	static const int R = 2;
+
+	static const int C = 3;
+	static const int N = 4;
+	static const int A = 5;
+
+	// G - ground?
+	static const int BAD = 7;
+
+	void dload(const char* s);
+	
+	Clause putClause(const IntStack& cs, const IntStack& gs, const int neck);
+	int deref(int x);
+
+	void pushBody(const int b, const int head, Clause& C, int*& gs, int& gsLength);
+	void makeIndexArgs(Spine* G, const int goal);
+
+	virtual std::string exportTerm(int x, bool& isArray); 
+	std::string showTerm(const int x); 
+
+	std::string showCell(const int w);	
+	std::string showCells(const int base, const int len);
+
+	static std::vector<int> toNums(std::vector<Clause>& clauses);
+
+	void index(std::vector<Clause>& clauses, IntMap vmaps[]);
+	std::string ask(bool& isArray, bool& isNull);
+	Spine* yield(); 
+
+	void popSpine();
+	bool hasGoals(Spine* S);
+	bool hasClauses(Spine* S);
+	Spine* unfold(Spine* G);
 public:
-
-   static const int MAXIND = 3; // number of index args
-   static const int START_INDEX = 20;
-  // switches off indexing for less then START_INDEX clauses e.g. <20
-
-  /**
-   * Builds a new engine from a natural-language style assembler.nl file
-   */
-   Engine(string fname);
-
-  /**
-   * trimmed down clauses ready to be quickly relocated to the heap
-   */
-  vector<Clause *> * clauses;
-  vector<int>  *cls;
-  /** symbol table made of map + reverse map from ints to syms */
-
-  // the linked hash map need to be replaced by a map and a list
-  map<string, int> syms;
-  list<string> syms_list;
-//   LinkedHashMap<string, Integer> syms;
-
-vector<string> slist;
-
-//    ArrayList<string> slist;
-
-  /** runtime areas:
-   *
-   * the heap contains code for and clauses their their copies
-   * created during execution
-   *
-   * the trail is an undo list for variable bindings
-   * that facilitates retrying failed goals with alternative
-   * matching clauses
-   *
-   * the unification stack ustack helps handling term unification non-recursively
-   *
-   * the spines stack contains abstractions of clauses and goals and performs the
-   * functions of  both a choice-point stack and goal stack
-   *
-   * imaps: contains indexes for up toMAXIND>0 arg positions (0 for pred symbol itself)
-   *
-   * vmaps: contains clause numbers for which vars occur in indexed arg positions
-   */
-
-vector<int> heap;
-int top;
-
-//   int heap[];
-//   int top;
-  static const int MINSIZE = 1 << 15; // power of 2
-
-   IntStack trail;
-   IntStack ustack;
-   ObStack<Spine*> spines;
-
-  Spine *query;
-
-  vector<IMap<int>*> *imaps;
-  vector<IntMap *> *vmaps;
-
-//   IMap<Integer>[] imaps;
-//   IntMap[] vmaps;
-
-  /**
-   * tags of our heap cells - that can also be seen as
-   * instruction codes in a compiled implementation
-   */
-    static const int V = 0;
-    static const int U = 1;
-    static const int R = 2;
-
-    static const int C = 3;
-    static const int N = 4;
-
-    static const int A = 5;
-
-  // G - ground?
-
-   static const int BAD = 7;
-
-  /**
-   * tags an integer value while fliping it into a negative
-   * number to ensure that untagged cells are always negative and the tagged
-   * ones are always positive - a simple way to ensure we do not mix them up
-   * at runtime
-   */
-   static int tag(int t, int w);
-
-  /**
-   * removes tag after flipping sign
-   */
-   static int detag(int w);
-
-  /**
-   * extracts the tag of a cell
-   */
-   static int tagOf(int w);
-
-  /**
-   * places an identifier in the symbol table
-   */
-   int addSym(string sym);
-
-  /**
-   * returns the symbol associated to an integer index
-   * in the symbol table
-   */
-   string getSym(int w);
-
-   void makeHeap();
-
-   void makeHeap(int size);
-
-   int getTop();
-
-   int setTop(int top);
-
-   void clear();
-
-  /**
-   * Pushes an element - top is incremented frirst than the
-   * element is assigned. This means top point to the last assigned
-   * element - which can be returned with peek().
-   */
-   void push(int i);
-
-   int size();
-  /**
-   * dynamic array operation: doubles when full
-   */
-   void expand();
-
-   void ensureSize(int more);
-
-  /**
-  * expands a "Xs lists .." statements to "Xs holds" statements
-  */
-
-   static vector<vector<string> > * maybeExpand(vector<string> Ws);
-
-  /**
-   * expands, if needed, "lists" statements in sequence of statements
-   */
-   static vector<vector<string> > * mapExpand(vector<vector<string> *>* Wss);
-
-  /**
-   * loads a program from a .nl file of
-   * "natural language" equivalents of Prolog/HiLog statements
-   */
-   vector<Clause *> * dload(string s);
-
-   static vector<int> * toNums(vector<Clause *> clauses);
-
-  /*
-   * encodes string constants into symbols while leaving
-   * other data types untouched
-   */
-   int encode(int t, string s);
-
-  /**
-   * true if cell x is a variable
-   * assumes that variables are tagged with 0 or 1
-   */
-   static bool isVAR(int x);
-
-  /**
-   * returns the heap cell another cell points to
-   */
-   int getRef(int x);
-  /*
-   * sets a heap cell to point to another one
-   */
-   void setRef(int w, int r);
-  /**
-   * removes binding for variable cells
-   * above savedTop
-   */
-   void unwindTrail(int savedTop);
-
-  /**
-   * scans reference chains starting from a variable
-   * until it points to an unbound root variable or some
-   * non-variable cell
-   */
-   int deref(int x);
-
-  /**
-   * raw display of a term - to be overridden
-   */
-   string showTerm(int x);
-
-  /**
-   * raw display of a externalized term
-   */
-   string showTerm(Object *O);
-
-  /**
-   * prints out content of the trail
-   */
-   void ppTrail();
-
-  /**
-   * builds an array of embedded arrays from a heap cell
-   * representing a term for interaction with an external function
-   * including a displayer
-   */
-   Object *exportTerm(int x);
-
-  /**
-   * extracts an integer array pointing to
-   * the skeleton of a clause: a cell
-   * pointing to its head followed by cells pointing to its body's
-   * goals
-   */
-   static vector<int> * getSpine(vector<int> cs);
-
-  /**
-   * raw display of a cell as tag : value
-   */
-   string showCell(int w);
-
-  /**
-   * a displayer for cells
-   */
-
-   string showCells(int base, int len);
-
-   string showCells(vector<int> cs);
-
-  /**
-  * to be overridden as a printer of a spine
-  */
-   void ppc(Spine C);
-
-  /**
-   * to be overridden as a printer for current goals
-   * in a spine
-   */
-   void ppGoals(IntList gs);
-
-  /**
-   * to be overriden as a printer for spines
-   */
-   void ppSpines();
-
-  /**
-   * unification algorithm for cells X1 and X2 on ustack that also takes care
-   * to trail bindigs below a given heap address "base"
-   */
-   bool unify(int base);
-
-   bool unify_args(int w1, int w2);
-
-  /**
-   * places a clause built by the Toks reader on the heap
-   */
-   Clause * putClause(vector<int> cs, vector<int> gs, int neck);
-
-  /**
-   * relocates a variable or array reference cell by b
-   * assumes var/ref codes V,U,R are 0,1,2
-   */
-   static int relocate(int b, int cell);
-
-  /**
-   * pushes slice[from,to] of array cs of cells to heap
-   */
-   void pushCells(int b, int from, int to, int base);
-
-  /**
-   * pushes slice[from,to] of array cs of cells to heap
-   */
-   void pushCells(int b, int from, int to, vector<int> cs);
-
-  /**
-   * copies and relocates head of clause at offset from heap to heap
-   */
-   int pushHead(int b, Clause *C);
-  /**
-   * copies and relocates body of clause at offset from heap to heap
-   * while also placing head as the first element of array gs that
-   * when returned contains references to the toplevel spine of the clause
-   */
-   vector<int> pushBody(int b, int head, Clause * C);
-
-  /**
-   * makes, if needed, registers associated to top goal of a Spine
-   * these registers will be reused when matching with candidate clauses
-   * note that xs contains dereferenced cells - this is done once for
-   * each goal's toplevel subterms
-   */
-   void makeIndexArgs(Spine *G, int goal);
-
-   vector<int> * getIndexables(int ref);
-
-   int cell2index(int cell); 
-
-  /**
-   * tests if the head of a clause, not yet copied to the heap
-   * for execution could possibly match the current goal, an
-   * abstraction of which has been place in xs
-   */
-   bool match(vector<int>* xs, Clause *C0);
-
-  /**
-   * transforms a spine containing references to choice point and
-   * immutable list of goals into a new spine, by reducing the
-   * first goal in the list with a clause that successfully
-   * unifies with it - in which case places the goals of the
-   * clause at the top of the new list of goals, in reverse order
-   */
-   Spine * unfold(Spine * G);
-
-  /**
-   * extracts a query - by convention of the form
-   * goal(Vars):-body to be executed by the engine
-   */
-   Clause * getQuery();
-
-  /**
-   * returns the initial spine built from the
-   * query from which execution starts
-   */
-   Spine * init();
-
-  /**
-   * returns an answer as a Spine while recording in it
-   * the top of the trail to allow the caller to retrieve
-   * more answers by forcing backtracking
-   */
-   Spine * answer(int ttop);
-
-  /**
-   * detects availability of alternative clauses for the
-   * top goal of this spine
-   */
-   bool hasClauses(Spine* S);
-
-  /**
-   * true when there are no more goals left to solve
-   */
-   bool hasGoals(Spine *S);
-
-   static vector<IntMap *> * vcreate(int l);
-
-  /**
-   * removes this spines for the spine stack and
-   * resets trail and heap to where they where at its
-   * creating time - while undoing variable binding
-   * up to that point
-   */
-   void popSpine();
-
-  /**
-   * main interpreter loop: starts from a spine and works
-   * though a stream of answers, returned to the caller one
-   * at a time, until the spines stack is empty - when it
-   * returns null
-   */
-  Spine * yield();
-
-  /**
-   * retrieves an answers and ensure the engine can be resumed
-   * by unwinding the trail of the query Spine
-   * returns an external "human readable" representation of the answer
-   */
-  Object * ask();
-
-  /**
-   * initiator and consumer of the stream of answers
-   * generated by this engine
-   */
-  void run();
-
-  static void put(vector<IMap<int> *>  *imaps, vector<IntMap*> * vss, vector<int> keys, int val);
-
-  vector<IMap<int> *> * index(vector<Clause *> *clauses, vector<IntMap *> * vmaps);
-
-  void ppCode();
-  string showClause(Clause *s);
-
+	void run();
+	Engine(const char* fname);
+	virtual ~Engine();
 };
 
 #endif
+
