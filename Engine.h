@@ -15,7 +15,6 @@
  
 // switches off indexing for less then START_INDEX clauses e.g. <20
 #define START_INDEX		20
-  
 
 /**
  * Implements execution mechanism
@@ -24,7 +23,6 @@ class Engine
 {
 private:
 	
-
 	int addSym(const std::string& sym);
 	
 
